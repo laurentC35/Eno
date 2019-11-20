@@ -1,7 +1,20 @@
 language: java
 jdk:
-- openjdk8
+  - openjdk8
 
 install:
-- mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-- mvn test -B
+  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+  - mvn test -B
+
+script: mvn package -B -DskipTests=true -Dmaven.javadoc.skip=true
+
+deploy:
+  skip_cleanup: true
+  provider: releases
+  edge: true
+  token:
+    secure: "S+8B2Vpux8aoLm3nGc5zdTbwU/lQ0eOZ6U8QfO1F8lP5UVRqTECtMkKkqFzXzP9MlF44dVocUcYUmLHQ92O9zdm2v0j2X2h75XXaYkr3X3pbGSc5gKaWt8FET9VjrGYLir6MKUrQGBZk742QX/opPhrTz3sSRwJvLypBUr+eX7MGSuZGlBXYD9BXuT39sjvblFQ8MJim/mF5NWvq/GmBbmuVi+gReTel1FcMp+8p/Nb+NRe9I1xXyZFXkFlLfX3ZJrz33sa2IWBfo0CgGyMPFg9jX0UKmFDKj/gTZW1EFJT2+pJYG0dAuJ015hPqM+CRb+bTsSiKOM70mr0Pc3DPE/zr5TIHXB2jUd7MRz/E6X41Im+aElpCtWTMn4+WVj3rL5l1CEIGUSQHrA2QFZNxb/4bJYDlCr3fqgARE9/pEEfcdWwNTkHzSpQS333vTJ5AfDE9rQgUqsqJO6qqgq9Y64kpvzTbNad2FS4oPpOvyCbTxQ3af5yGyfab/DwKNAFaZ6tWhy7GE4W0XECZ2JZ/MR7AYQjbKfvP8QQ1Ud6W+piW+xFs9GUNdj7ZGu/VFG/TNDsSoQYGag109rRArcykTCU0mwzdPATPf4e5jHrkFDTkxsZjlHOgRqSjRdOs4pqn9Mn4OFVunu+GVIsKErtRyBjr3Fb4hrA7QJ761aQkWZw="
+  file_glob: true
+  file: target/*.jar
+  on:
+    tags: true
