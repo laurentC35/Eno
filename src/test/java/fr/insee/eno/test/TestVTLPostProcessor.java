@@ -12,15 +12,56 @@ import org.junit.Test;
 import org.xmlunit.diff.Diff;
 
 import fr.insee.eno.Constants;
+import fr.insee.eno.postprocessing.fr.FRVTLToXpathParserPostprocessor;
 import fr.insee.eno.postprocessing.js.JSVTLParserPostprocessor;
 
 public class TestVTLPostProcessor {
 
 	private JSVTLParserPostprocessor jsvtlParserPostprocessor = new JSVTLParserPostprocessor();
+	private FRVTLToXpathParserPostprocessor frvtlToXpathParserPostprocessor = new FRVTLToXpathParserPostprocessor();
 	private XMLDiff xmlDiff = new XMLDiff();
-		
+	
+	
 	@Test
-	public void simpleTest() {
+	public void parseToXpathTest() {
+
+		String test1 = "a &lt;&gt; (y/4)";	
+		String expected1 = "a!=(y div 4)";
+		
+		String test2 = "\"a &lt;&gt; (y/4)\"";	
+		String expected2 = "\"a &lt;&gt; (y/4)\"";
+
+		String test3 = "substr(x,y,z)";
+		String expected3 = "substring(x,y,z)";
+
+		String test4 = "x / y";
+		String expected4 = "x  div  y";
+		
+		String test5 = "x || y || z";
+		String expected5 = "concat(concat(x , y ), z)";
+
+		String test6 = "substr(x,y,z) || a || x";
+		String expected6 = "concat(concat(substring(x,y,z) , a ), x)";
+		
+		String test7 = "substr(x || y,1,2) || a || x";
+		String test8 = "substr(x,y,z) || a || x || substr(x1,y1,z1) || b &lt;&gt; 'abc'";
+		String expected7 = "concat(concat(substring(x,y,z) , a ), x)";
+		
+		System.out.println(frvtlToXpathParserPostprocessor.parseToXpath(test8));
+		System.out.println(test8);
+		//System.out.println(jsvtlParserPostprocessor.parseToVTL(frvtlToXpathParserPostprocessor.parseToXpath(test8)));
+		/*Assert.assertEquals(expected1, frvtlToXpathParserPostprocessor.parseToXpath(test1));
+		Assert.assertEquals(expected2, frvtlToXpathParserPostprocessor.parseToXpath(test2));
+		Assert.assertEquals(expected3, frvtlToXpathParserPostprocessor.parseToXpath(test3));
+		Assert.assertEquals(expected4, frvtlToXpathParserPostprocessor.parseToXpath(test4));
+		Assert.assertEquals(expected5, frvtlToXpathParserPostprocessor.parseToXpath(test5));
+		Assert.assertEquals(expected6, frvtlToXpathParserPostprocessor.parseToXpath(test6));*/
+		//Assert.assertEquals(expected5, frvtlToXpathParserPostprocessor.parseToXpath(test5));
+	}
+	
+	
+	@Test
+	public void parseToVTLTest() {
 		
 		String test1 = "concat(x,y,z)";
 		String expected1 = "x || y || z";		
