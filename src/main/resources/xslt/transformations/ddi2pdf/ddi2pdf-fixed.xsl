@@ -4,8 +4,8 @@
     xmlns:enoddi="http://xml.insee.fr/apps/eno/ddi"
     xmlns:enopdf="http://xml.insee.fr/apps/eno/out/form-runner"
     xmlns:enoddi2pdf="http://xml.insee.fr/apps/eno/ddi2pdf"
-    xmlns:d="ddi:datacollection:3_2"
-    xmlns:r="ddi:reusable:3_2" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:l="ddi:logicalproduct:3_2" version="2.0">
+    xmlns:d="ddi:datacollection:3_3"
+    xmlns:r="ddi:reusable:3_3" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:l="ddi:logicalproduct:3_3" version="2.0">
 
     <!-- Importing the different resources -->
     <xsl:import href="../../inputs/ddi/source.xsl"/>
@@ -38,6 +38,107 @@
     </xd:doc>
     <xsl:variable name="labels-resource">
         <xsl:sequence select="eno:build-labels-resource($labels-folder,enopdf:get-form-languages(//d:Sequence[d:TypeOfSequence/text()='template']))"/>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>The properties and parameters files are charged as xml trees.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="properties" select="doc($properties-file)"/>
+    <xsl:variable name="parameters">
+        <xsl:choose>
+            <xsl:when test="$parameters-node/*">
+                <xsl:copy-of select="$parameters-node"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:copy-of select="doc($parameters-file)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>Variables from propertiers and parameters</xd:desc>
+    </xd:doc>
+    <xsl:variable name="orientation">
+        <xsl:choose>
+            <xsl:when test="$parameters//pdf-parameters/Format/Orientation != ''">
+                <xsl:value-of select="$parameters//pdf-parameters/Format/Orientation"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$properties//pdf-parameters/Format/Orientation"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="column-count">
+        <xsl:choose>
+            <xsl:when test="$parameters//pdf-parameters/Format/Columns != ''">
+                <xsl:value-of select="$parameters//pdf-parameters/Format/Columns"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$properties//Format/Columns"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="roster-defaultsize">
+        <xsl:choose>
+            <xsl:when test="$parameters//pdf-parameters/Roster/Row/DefaultSize != ''">
+                <xsl:value-of select="$parameters//pdf-parameters/Roster/Row/DefaultSize"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$properties//Roster/Row/DefaultSize"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="table-defaultsize">
+        <xsl:choose>
+            <xsl:when test="$parameters//pdf-parameters/Table/Row/DefaultSize != ''">
+                <xsl:value-of select="$parameters//pdf-parameters/Table/Row/DefaultSize"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$properties//pdf-parameters/Table/Row/DefaultSize"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="textarea-defaultsize">
+        <xsl:choose>
+            <xsl:when test="$parameters//pdf-parameters/TextArea/Row/DefaultSize != ''">
+                <xsl:value-of select="$parameters//pdf-parameters/TextArea/Row/DefaultSize"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$properties//TextArea/Row/DefaultSize"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="images-folder">
+        <xsl:choose>
+            <xsl:when test="$parameters//Images/Folder != ''">
+                <xsl:value-of select="$parameters//Images/Folder"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$properties//Images/Folder"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="numeric-capture">
+        <xsl:choose>
+            <xsl:when test="$parameters//Capture/Numeric != ''">
+                <xsl:value-of select="$parameters//Capture/Numeric"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$properties//Capture/Numeric"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="page-break-between">
+        <xsl:choose>
+            <xsl:when test="$parameters//PageBreakBetween/pdf != ''">
+                <xsl:value-of select="$parameters//PageBreakBetween/pdf"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$properties//PageBreakBetween/pdf"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:variable>
 
     <xd:doc>
@@ -111,6 +212,17 @@
         <xsl:variable name="tempLabel">
             <xsl:apply-templates select="enoddi:get-label($context,$language)" mode="enopdf:format-label">
                 <xsl:with-param name="label-variables" select="enoddi:get-label-conditioning-variables($context,$language)" tunnel="yes"/>
+            </xsl:apply-templates>
+        </xsl:variable>
+        <xsl:sequence select="$tempLabel"/>
+    </xsl:function>
+    
+    <xsl:function name="enopdf:get-formatted-fixed-value">
+        <xsl:param name="context" as="item()"/>
+        <xsl:param name="language"/>
+        <xsl:variable name="tempLabel">
+            <xsl:apply-templates select="enoddi:get-cell-value($context)" mode="enopdf:format-label">
+                <xsl:with-param name="label-variables" select="enoddi:get-cell-value-variables($context)" tunnel="yes"/>
             </xsl:apply-templates>
         </xsl:variable>
         <xsl:sequence select="$tempLabel"/>
