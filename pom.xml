@@ -64,8 +64,8 @@
 		<source.plugin.version>3.0.1</source.plugin.version>
 		<javadoc.plugin.version>3.0.0</javadoc.plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<compiler.source>11</compiler.source>
-		<compiler.target>11</compiler.target>
+		<compiler.source>1.8</compiler.source>
+		<compiler.target>1.8</compiler.target>
 	</properties>
 
 	<dependencies>
@@ -195,7 +195,7 @@
 					<inputEncoding>UTF-8</inputEncoding>
 					<outputEncoding>UTF-8</outputEncoding>
 					<argLine>-Dfile.encoding=UTF-8
-						-Djavax.xml.bind.JAXBContextFactory=org.eclipse.persistence.jaxb.JAXBContextFactory</argLine>
+						-Djavax.xml.bind.context.factory=org.eclipse.persistence.jaxb.JAXBContextFactory</argLine>
 				</configuration>
 			</plugin>
 			<plugin>
