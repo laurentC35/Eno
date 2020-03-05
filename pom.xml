@@ -54,7 +54,7 @@
 		<xalan.version>2.7.1</xalan.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<eclipse.version>2.6.0</eclipse.version>
-		<jaxb-api.version>2.3.1</jaxb-api.version>
+		<jaxb-api.version>2.3.0</jaxb-api.version>
 		
 		<apache-commons.version>3.5</apache-commons.version>
 		<junit.version>4.12</junit.version>
@@ -64,8 +64,8 @@
 		<source.plugin.version>3.0.1</source.plugin.version>
 		<javadoc.plugin.version>3.0.0</javadoc.plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<compiler.source>11</compiler.source>
-		<compiler.target>11</compiler.target>
+		<compiler.source>1.8</compiler.source>
+		<compiler.target>1.8</compiler.target>
 	</properties>
 
 	<dependencies>
@@ -195,7 +195,7 @@
 					<inputEncoding>UTF-8</inputEncoding>
 					<outputEncoding>UTF-8</outputEncoding>
 					<argLine>-Dfile.encoding=UTF-8
-						-Djavax.xml.bind.JAXBContextFactory=org.eclipse.persistence.jaxb.JAXBContextFactory</argLine>
+						-Djavax.xml.bind.context.factory=org.eclipse.persistence.jaxb.JAXBContextFactory</argLine>
 				</configuration>
 			</plugin>
 			<plugin>
