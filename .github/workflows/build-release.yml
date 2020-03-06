@@ -22,6 +22,9 @@ jobs:
       
     - name: Test with Maven
       run: mvn test -B --file pom.xml
+    
+    - name: Package final with Maven
+      run: mvn clean package -DskipTests=true -Djar.finalName="eno-core" --file pom.xml
       
     - name: Create Release
       id: create_release
